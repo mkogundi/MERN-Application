@@ -1,0 +1,95 @@
+.navbar {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid #333;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo span {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.nav-logo span:hover {
+  transform: scale(1.05);
+  color: #ff5252;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-user {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  border: 2px solid #ff6b6b;
+  background: transparent;
+  color: #ff6b6b;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.nav-link:hover {
+  background: #ff6b6b;
+  color: #0a0a0a;
+}
+
+.admin-btn {
+  border-color: #feca57;
+  color: #feca57;
+}
+
+.admin-btn:hover {
+  background: #feca57;
+  color: #0a0a0a;
+}
+
+.logout-btn {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+}
+
+.login-btn, .register-btn {
+  background: transparent;
+  border-color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-logo span {
+    font-size: 20px;
+  }
+}
