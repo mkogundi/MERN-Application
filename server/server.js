@@ -59,6 +59,7 @@ const connectMongoDB = async () => {
 connectMongoDB();
 
 // Routes
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/genres', require('./routes/genreRoutes'));
 app.use('/api/movies', require('./routes/movieRoutes'));
 
