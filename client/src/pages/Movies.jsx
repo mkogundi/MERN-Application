@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { movieService, genreService } from '../services/api';
-import { useAuth } from '../context/AuthContext';
 import './Movies.css';
 
 export const Movies = () => {
@@ -12,7 +11,6 @@ export const Movies = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
   const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
