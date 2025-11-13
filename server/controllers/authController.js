@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // Register user
@@ -7,32 +6,29 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Validate input
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Please provide username, email, and password' });
+    }
+
     // Check if user already exists
     let user = await User.findOne({ $or: [{ username }, { email }] });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
+    // Create new user (password will be hashed by the model's pre-save hook)
     user = new User({
       username,
       email,
-      password: hashedPassword,
+      password,
       isAdmin: false
     });
 
     await user.save();
 
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // Generate token using model method
+    const token = user.generateToken();
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -45,6 +41,7 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Register error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -54,24 +51,25 @@ exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Find user
-    const user = await User.findOne({ username });
+    // Validate input
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Please provide username and password' });
+    }
+
+    // Find user and include password field
+    const user = await User.findOne({ username }).select('+password');
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Check password using model method
+    const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // Generate token using model method
+    const token = user.generateToken();
 
     res.json({
       message: 'Login successful',
@@ -84,6 +82,7 @@ exports.login = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -92,8 +91,12 @@ exports.login = async (req, res) => {
 exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     res.json(user);
   } catch (error) {
+    console.error('Get user error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
