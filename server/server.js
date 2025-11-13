@@ -10,7 +10,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    process.env.FRONTEND_URL || 'https://your-vercel-app.vercel.app'
+    'https://movie-application-manish-kogundis-projects.vercel.app',
+    'https://movie-application-topaz.vercel.app'
   ],
   credentials: true
 }));
